@@ -29,18 +29,17 @@ function params = logistic_sgd(X, z, num_epochs)
         permutation = randperm(num_pts);
         X = X(permutation, :);
         z = z(permutation);
-        
+
         % Iterate over the points
         for i = 1:num_pts
-            gradient = sum((sigmoid(X*params) - z).^2);
-            params = params - (1./ep)*gradient;
+            sig = sigmoid(X*params);
+            gradient = 2 .* ((sig - z) * sig'  * (1 - sig))' * X;
+            params = params - (1/ep)*gradient';
         end
-
     end
 
 end
 
 function sig = sigmoid(z)
-    sig = 1./exp(z*-1);
+    sig = 1./(1+exp(-z));
 end
-
