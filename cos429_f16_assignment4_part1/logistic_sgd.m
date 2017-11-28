@@ -33,7 +33,7 @@ function params = logistic_sgd(X, z, num_epochs)
         % Iterate over the points
         for i = 1:num_pts
             sig = sigmoid(X*params);
-            gradient = 2 .* ((sig - z) * sig'  * (1 - sig))' * X;
+            gradient = 2 .* ((sig - z) .* sig  .* (1 - sig))' * X;
             params = params - (1/ep)*gradient';
         end
     end
