@@ -3,5 +3,5 @@ function y = relu(x)
 % [y]: relu(x) as described in class applied elementwise.
 % TODO: Implement me!
     x(x<0) = 0;
-    y = x(:);
+    y = x;
 end

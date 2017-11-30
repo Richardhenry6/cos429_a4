@@ -14,5 +14,6 @@ function dLdX = logistic_backprop(dLdy, y)
 % into the derivative.
 %
 % TODO: Implement me!
-    assert(false, 'Unimplemented: logistic_backprop()!');
+    dLdx = (y*(1-y)) * dLdy;
+    
 end

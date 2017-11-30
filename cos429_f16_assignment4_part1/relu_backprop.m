@@ -11,6 +11,8 @@ function dLdX = relu_backprop(dLdy, x)
 %   that were passed into relu().
 % [dLdX]: a row vector of doubles with shape [1, N]. Should contain the
 %   partial derivative of the loss with respect to each element of x.
-    % TODO: Implement me!
-    assert(false, 'Unimplemented: relu_backprop()!');
+     x = relu(x);
+     x(x>0) = 1;
+     x(x<=0) = 0;
+     dLdx = x * dLdy;
 end
