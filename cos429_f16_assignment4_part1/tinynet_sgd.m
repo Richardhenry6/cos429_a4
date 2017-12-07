@@ -17,14 +17,13 @@
 function net = tinynet_sgd(X, z, layers, epoch_count)
 
     [example_count, feature_count] = size(X);
-
+  
     % Randomly initialize the parameters.
     net = initialize_net(layers, feature_count);
     hidden_layer_count = net('hidden_layer_count');
     % The value at key i is the intermediate output of the network at
     % layer i. The type is 'any' because the neuron count is variable.
     activations = containers.Map('KeyType', 'int32', 'ValueType', 'any');
-    
     % For each epoch, train on all data examples.
     for ep = 1:epoch_count
         fprintf('Starting epoch %i of %i...\n', ep, epoch_count);
@@ -78,9 +77,16 @@ function net = tinynet_sgd(X, z, layers, epoch_count)
             % before relu has been applied.
             % activations(hidden_layer_count+1) is the final output before
             % it is squished with the logistic function.
+            dLdz_hat = 2*(z_hat - z(i));
+            out = relu(X(i,:));
+            out(out<=0)= 0;
+            out(out>0)= 1;
+            dLdzz = out.*X(i,:)
+            dxval = logistic_backprop(dLdz_hat,z_hat);
+            net(sprintf('hidden-%i-W', example_count-1)) = dxval;
+            dLdX2=relu_backprop(dxval,X(i,:));
+            [dx dw db] = fully_connected_backprop(dLdX2,activations(i),net('final-W'));
             
-            % TODO: Implement me!
-            assert(false, 'Unimplemented: tinynet_sgd!');
         end
     end
 end

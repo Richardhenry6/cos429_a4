@@ -15,35 +15,43 @@ function test_logistic_sgd
     num_pts = size(training, 1);
     X = [ones(num_pts,1) training(:,1:2)];
     z = training(:,3);
-    num_epochs = 5;
-    params = logistic_sgd(X, z, num_epochs);
-
+    ave = [];
+    acu = [];
+    for num_epochs = 1:10
     % Apply the learned model to the training data and print out statistics
     % (Notice that the training_accuracy = ... line doesn't have a
     % semicolon, hence the value is printed out.)
-    predicted = logistic_predict(X, params);
-    training_accuracy = sum(predicted == z) / num_pts
+    %predicted = logistic_predict(X, params);
+    %training_accuracy = sum(predicted == z) / num_pts
 
     % Plot "ground truth" and predictions
-    set(figure(1), 'Name', 'Training ground truth');
-    plot_classes(training, z);
-    set(figure(2), 'Name', 'Training predicted');
-    plot_classes(training, predicted);
+    %set(figure(1), 'Name', 'Training ground truth');
+    %plot_classes(training, z);
+    %set(figure(2), 'Name', 'Training predicted');
+    %plot_classes(training, predicted);
 
+    
     % Apply the learned model to the test data
     testing = load('test_data.txt');
     num_pts = size(testing, 1);
     X = [ones(num_pts,1) testing(:,1:2)];
     z = testing(:,3);
+    for x = 1:10
+    params = logistic_sgd(X, z, num_epochs);
     predicted = logistic_predict(X, params);
     testing_accuracy = sum(predicted == z) / num_pts
-
-    % Plot "ground truth" and predictions
-    set(figure(3), 'Name', 'Testing ground truth');
-    plot_classes(testing, z);
-    set(figure(4), 'Name', 'Testing predicted');
-    plot_classes(testing, predicted);
-
+    acu = [acu, testing_accuracy]
+    end
+    
+    ave = [ave mean(acu)];
+    acu = [];
+    end
+    %Plot testing
+    figure
+    plot(1:10,ave);
+    xlabel("Number of Epochs");
+    ylabel("Accuracy");
+    
 end
 
 

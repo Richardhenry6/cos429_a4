@@ -21,7 +21,7 @@ function params = logistic_sgd(X, z, num_epochs)
     mean = 0;
     sigma = 1 / sqrt(num_vars / 2);
     params = normrnd(mean, sigma, num_vars, 1);
-
+    
     % Loop over epochs
     for ep = 1:num_epochs
 
@@ -29,15 +29,14 @@ function params = logistic_sgd(X, z, num_epochs)
         permutation = randperm(num_pts);
         X = X(permutation, :);
         z = z(permutation);
-
+        
         % Iterate over the points
         for i = 1:num_pts
-            sig = sigmoid(X*params);
-            gradient = 2 .* ((sig - z) .* sig  .* (1 - sig))' * X;
-            params = params - (1/ep)*gradient';
+            sig = sigmoid(X(i,:)*params);
+            gradient = (2 .* ((sig - z(i,:)) .* sig  .* (1 - sig)) * X(i,:)');
+            params = params - (1/ep)*gradient;
         end
     end
-
 end
 
 function sig = sigmoid(z)

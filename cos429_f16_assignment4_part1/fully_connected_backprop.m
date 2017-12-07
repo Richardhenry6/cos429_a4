@@ -27,8 +27,9 @@ function [dLdX, dLdW, dLdB] = fully_connected_backprop(dLdU, x, W)
 % [dLdB]: a row-vector with shape [1, neuron_count] (the same shape as b).
 %   Each element should contain the partial derivative of L with respect to
 %   the corresponding value of b.
-    dLdW = x * dLdU;
-    
+    dLdX = dLdU*W';
+    dLdW = x' * dLdU;
+    dLdB = dLdU;
 end
 
 
