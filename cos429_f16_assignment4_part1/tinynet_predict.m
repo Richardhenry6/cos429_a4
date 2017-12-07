@@ -15,7 +15,7 @@ function z = tinynet_predict(X, net)
     hidden_layer_count = net('hidden_layer_count');
     [example_count, ~] = size(X);
     z_hat = zeros(example_count, 1);
-    act = [];
+    act = containers.Map('KeyType', 'int32', 'ValueType', 'any');
     for ei = 1:example_count
         x = X(ei, :);
         % Set z_hat(ei) by propogating x through the network.
@@ -24,7 +24,7 @@ function z = tinynet_predict(X, net)
         % in tinynet_sgd.m
         W_1 = net('hidden-1-W');
         b_1 = net('hidden-1-b');
-        act(1) = relu(fully_connected(x, W_1, b_1));
+        act(1) = [relu(fully_connected(x, W_1, b_1))];
         for i = 2:hidden_layer_count
             W = net(sprintf('hidden-%i-W', i));
             b = net(sprintf('hidden-%i-b', i));

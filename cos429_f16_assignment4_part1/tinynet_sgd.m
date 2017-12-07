@@ -78,15 +78,14 @@ function net = tinynet_sgd(X, z, layers, epoch_count)
             % activations(hidden_layer_count+1) is the final output before
             % it is squished with the logistic function.
             dLdz_hat = 2*(z_hat - z(i));
-            out = relu(X(i,:));
-            out(out<=0)= 0;
-            out(out>0)= 1;
-            dLdzz = out.*X(i,:)
+            %out = relu(X(i,:));
+            %out(out<=0)= 0;
+            %out(out>0)= 1;
+            %dLdzz = out.*X(i,:)
             dxval = logistic_backprop(dLdz_hat,z_hat);
-            net(sprintf('hidden-%i-W', example_count-1)) = dxval;
-            dLdX2=relu_backprop(dxval,X(i,:));
-            [dx dw db] = fully_connected_backprop(dLdX2,activations(i),net('final-W'));
-            
+           % net(sprintf('hidden-%i-W', example_count-1)) = dxval;
+           % dLdX2=relu_backprop(dxval,X(i,:));
+           % [dx dw db] = fully_connected_backprop(dLdX2,activations(i),net('final-W'));        
         end
     end
 end
