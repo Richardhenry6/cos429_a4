@@ -14,5 +14,5 @@ function dLdX = relu_backprop(dLdy, x)
      x = relu(x);
      x(x>0) = 1;
      x(x<=0) = 0;
-     dLdX = x * dLdy;
+     dLdX = x .* dLdy;
 end

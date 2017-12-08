@@ -34,7 +34,7 @@ function z = tinynet_predict(X, net)
     
         W = net('final-W');
         b = net('final-b');
-        x = fully_connected(act(hidden_layer_count), W, b);
+        x = fully_connected(relu(act(hidden_layer_count)), W, b);
         z_hat(ei) = logistic(x);
         
     end

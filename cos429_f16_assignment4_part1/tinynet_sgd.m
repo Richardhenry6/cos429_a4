@@ -77,16 +77,23 @@ function net = tinynet_sgd(X, z, layers, epoch_count)
             % before relu has been applied.
             % activations(hidden_layer_count+1) is the final output before
             % it is squished with the logistic function.
+            
             dLdz_hat = 2*(z_hat - z(i));
-            %out = relu(X(i,:));
-            %out(out<=0)= 0;
-            %out(out>0)= 1;
-            %dLdzz = out.*X(i,:)
-            dxval = logistic_backprop(dLdz_hat,z_hat);
-           % net(sprintf('hidden-%i-W', example_count-1)) = dxval;
-           % dLdX2=relu_backprop(dxval,X(i,:));
-           % [dx dw db] = fully_connected_backprop(dLdX2,activations(i),net('final-W'));        
+            dldx = logistic_backprop(dLdz_hat,z_hat);
+            [dx dw db] = fully_connected_backprop(relu_backprop(dldx, activations(hidden_layer_count+1)),activations(hidden_layer_count+1),net('final-W'));   
+            net('final-W') = net('final-W') .* dw;
+            net('final-b') = net('final-b') .* db;
+            
+            for i=hidden_layer_count:-1:1    
+                W = net(sprintf('hidden-%i-W', i));
+                
+                [dx dw db] = fully_connected_backprop(relu_backprop(dx,activations(i)),activations(i-1),net(sprintf('hidden-%i-W', i)));  
+                net(sprintf('hidden-%i-W', i)) = net(sprintf('hidden-%i-W', i)) .* dw;
+                net(sprintf('hidden-%i-b', i)) = net(sprintf('hidden-%i-b', i)) .* db;
+            end
+            
         end
+            
     end
 end
 
@@ -97,12 +104,12 @@ function z_hat = full_forward_pass(example, net, activations)
     
     W_1 = net('hidden-1-W');
     b_1 = net('hidden-1-b');
-    activations(1) = relu(fully_connected(x, W_1, b_1));
+    activations(1) = fully_connected(x, W_1, b_1);
     for i = 2:hidden_layer_count
        W = net(sprintf('hidden-%i-W', i));
        b = net(sprintf('hidden-%i-b', i));
        % Apply the ith hidden layer and relu and update x.
-       activations(i) = relu(fully_connected(activations(i-1), W, b));
+       activations(i) = fully_connected(relu(activations(i-1)), W, b);
     end
     
     W = net('final-W');
@@ -110,7 +117,7 @@ function z_hat = full_forward_pass(example, net, activations)
     % Apply the final layer, and then the sigmoid to get zhat.
     % Ignore the unused warning for activations - it is a handle object, so
     % it is pass by reference.
-    x = fully_connected(activations(hidden_layer_count), W, b);
+    x = fully_connected(relu(activations(hidden_layer_count)), W, b);
     activations(hidden_layer_count+1) = x;
     z_hat = logistic(x);
 end
