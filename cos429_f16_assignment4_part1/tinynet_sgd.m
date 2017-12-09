@@ -55,11 +55,11 @@ function net = tinynet_sgd(X, z, layers, epoch_count)
             % Faster networks would cache them, but memory management here
             % is already bad enough that it won't matter much.
             activations(0) = X(i, :);
-            
+         
             % Forward propagation pass to evaluate the network
             % z_hat is the output of the network; activations has been
             % updated in-place to contain the network outputs of layer i
-            % at activations(i).
+            % at activations(i).            
             z_hat = full_forward_pass(X(i, :), net, activations);
 
             % Backwards pass to evaluate gradients at each layer and update
@@ -77,21 +77,42 @@ function net = tinynet_sgd(X, z, layers, epoch_count)
             % before relu has been applied.
             % activations(hidden_layer_count+1) is the final output before
             % it is squished with the logistic function.
-            
             dLdz_hat = 2*(z_hat - z(i));
             dldx = logistic_backprop(dLdz_hat,z_hat);
-            [dx dw db] = fully_connected_backprop(relu_backprop(dldx, activations(hidden_layer_count+1)),activations(hidden_layer_count+1),net('final-W'));   
-            net('final-W') = net('final-W') .* dw;
-            net('final-b') = net('final-b') .* db;
-            
-            for i=hidden_layer_count:-1:1    
-                W = net(sprintf('hidden-%i-W', i));
-                
-                [dx dw db] = fully_connected_backprop(relu_backprop(dx,activations(i)),activations(i-1),net(sprintf('hidden-%i-W', i)));  
-                net(sprintf('hidden-%i-W', i)) = net(sprintf('hidden-%i-W', i)) .* dw;
-                net(sprintf('hidden-%i-b', i)) = net(sprintf('hidden-%i-b', i)) .* db;
+            [dx, dw, db] = fully_connected_backprop_gt(relu_backprop(dldx, activations(hidden_layer_count+1)),activations(hidden_layer_count),net('final-W'));  
+           
+%                if(dw ~= 0)
+%                     
+%                 end
+%             if(db ~= 0)
+%                     disp(db)
+%             end
+%             if(activations(3) > 0)
+%                 dx
+%             end
+            net('final-W') =  net('final-W') -  learning_rate * dw;
+            net('final-b') =  net('final-b') - learning_rate * db;
+            for e = hidden_layer_count:-1:1 
+%                 if(dw ~= 0)
+%                     disp(dw)
+%                 end
+%             if(db ~= 0)
+%                     disp(db)
+%                 end
+
+                [dx, dw , db] = fully_connected_backprop(relu_backprop(dx,activations(e)),activations(e-1),net(sprintf('hidden-%i-W', e)));
+                net(sprintf('hidden-%i-W', e)) = net(sprintf('hidden-%i-W', e)) -  learning_rate * dw;
+                net(sprintf('hidden-%i-b', e)) = net(sprintf('hidden-%i-b', e)) -  learning_rate * db;
             end
-            
+%             if(net('hidden-1-W')  ~= w1) 
+%                 disp("1 diff") 
+%             end
+%             if(net('hidden-2-W') ~= w2) 
+%                 disp("2 diff") 
+%             end
+%             if(net('final-W') ~= w3) 
+%                 disp("3 diff") 
+%             end
         end
             
     end

@@ -14,6 +14,6 @@ function dLdX = logistic_backprop(dLdy, y)
 % into the derivative.
 %
 % TODO: Implement me!
-    dLdX = (y*(1-y)) * dLdy;
+    dLdX = (y*(1-y)) .* dLdy;
     
 end
